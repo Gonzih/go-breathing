@@ -1,0 +1,6 @@
+package: box-breathing
+import:
+- package: github.com/mattn/go-gtk
+  subpackages:
+  - gtk
+  - glib
