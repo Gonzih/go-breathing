@@ -2,7 +2,7 @@ package main
 
 import (
 	"os"
-	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/mattn/go-gtk/gdk"
@@ -66,14 +66,15 @@ func main() {
 	percUpperLimit := 9500
 	duration := time.Second * 4
 	tickDuration := time.Second * 4 / 7000
-	timeout := 5
+	timeout := 10
 	direction := 1
 
-	var percMutex sync.RWMutex
-	perc := percLowerLimit + 1
+	var percAtom int64 = int64(percLowerLimit + 1)
 
 	go func() {
 		for {
+			perc := int(atomic.LoadInt64(&percAtom))
+
 			if perc >= percUpperLimit || perc <= percLowerLimit {
 				direction = -direction
 				time.Sleep(duration)
@@ -81,18 +82,13 @@ func main() {
 				time.Sleep(tickDuration)
 			}
 
-			percMutex.Lock()
-			perc += direction
-			percMutex.Unlock()
+			atomic.AddInt64(&percAtom, int64(direction))
 		}
 	}()
 
 	previousPerc := 0
 
 	glib.TimeoutAdd(uint(timeout), func() bool {
-		percMutex.RLock()
-		defer percMutex.RUnlock()
-
 		var windowW, windowH int
 		window.GetSize(&windowW, &windowH)
 
@@ -101,6 +97,8 @@ func main() {
 		centerY := windowH / 2
 		startX := centerX - maxSize/2
 		startY := centerY - maxSize/2
+
+		perc := int(atomic.LoadInt64(&percAtom))
 
 		// fmt.Printf("perc = %d, direction = %d\n", perc, direction)
 
