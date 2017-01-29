@@ -69,7 +69,7 @@ func main() {
 	timeout := 10
 	direction := 1
 
-	var percAtom int32 = int32(percLowerLimit + 1)
+	percAtom := int32(percLowerLimit + 1)
 
 	go func() {
 		for {
