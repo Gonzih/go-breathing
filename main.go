@@ -33,8 +33,10 @@ func main() {
 	window.Connect("key-press-event", func(ctx *glib.CallbackContext) {
 		arg := ctx.Args(0)
 		key := *(**gdk.EventKey)(unsafe.Pointer(&arg))
+		// fmt.Println(key.Keyval)
 
-		if key.Keyval == 113 {
+		switch key.Keyval {
+		case 113, 65307:
 			gtk.MainQuit()
 		}
 	})
