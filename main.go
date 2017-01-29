@@ -63,20 +63,25 @@ func main() {
 	angle2 := 360 * 64
 
 	duration := time.Second * 4
-	tickDuration := time.Second * 4 / 90
-	timeout := 50
+	longTickDuration := time.Second * 4 / 80
+	shortTickDuration := time.Second * 4 / 80
+	timeout := 10
 	direction := 1
 
 	var percMutex sync.RWMutex
-	perc := 6
+	perc := 11
 
 	go func() {
 		for {
-			if perc >= 95 || perc <= 5 {
+			if perc >= 90 || perc <= 10 {
 				direction = -direction
 				time.Sleep(duration)
 			} else {
-				time.Sleep(tickDuration)
+				if perc > 25 && perc < 75 {
+					time.Sleep(shortTickDuration)
+				} else {
+					time.Sleep(longTickDuration)
+				}
 			}
 
 			percMutex.Lock()
