@@ -36,7 +36,8 @@ func main() {
 		allocation := drawingarea.GetAllocation()
 		pixmap = gdk.NewPixmap(drawingarea.GetWindow().GetDrawable(), allocation.Width, allocation.Height, 24)
 		gc = gdk.NewGC(pixmap.GetDrawable())
-		gc.SetRgbFgColor(gdk.NewColor("white"))
+		color := gdk.NewColorRGB(0xe6e6, 0xe9e9, 0xecec)
+		gc.SetRgbFgColor(color)
 		gc.SetRgbBgColor(gdk.NewColor("white"))
 		pixmap.GetDrawable().DrawRectangle(gc, true, 0, 0, -1, -1)
 	})
@@ -110,7 +111,7 @@ func main() {
 		x := startX + (maxSize-size)/2
 		y := startY + (maxSize-size)/2
 
-		color := gdk.NewColor("blue")
+		color := gdk.NewColorRGB(0x2222, 0x6f6f, 0xa0a0)
 		gc.SetRgbFgColor(color)
 		pixmap.GetDrawable().DrawArc(gc, true, x, y, size, size, angle1, angle2)
 
