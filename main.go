@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -96,6 +95,8 @@ func main() {
 		}
 	}()
 
+	previousPerc := 0
+
 	glib.TimeoutAdd(uint(timeout), func() bool {
 		percMutex.RLock()
 		defer percMutex.RUnlock()
@@ -109,7 +110,7 @@ func main() {
 		startX := centerX - maxSize/2
 		startY := centerY - maxSize/2
 
-		fmt.Printf("perc = %d, direction = %d\n", perc, direction)
+		// fmt.Printf("perc = %d, direction = %d\n", perc, direction)
 
 		gc.SetRgbFgColor(gdk.NewColor("black"))
 		pixmap.GetDrawable().DrawArc(gc, true, startX-10, startY-10, maxSize+20, maxSize+20, angle1, angle2)
@@ -119,13 +120,17 @@ func main() {
 		size := maxSize / 100 * perc
 		x := startX + (maxSize-size)/2
 		y := startY + (maxSize-size)/2
-		fmt.Println(size, x)
 
 		color := gdk.NewColor("blue")
 		gc.SetRgbFgColor(color)
 		pixmap.GetDrawable().DrawArc(gc, true, x, y, size, size, angle1, angle2)
 
-		drawingarea.QueueDraw()
+		if previousPerc != perc {
+			drawingarea.QueueDraw()
+			previousPerc = perc
+			// fmt.Println("Skipping redraw queue")
+		}
+
 		return true
 	})
 
