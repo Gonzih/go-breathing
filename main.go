@@ -62,17 +62,19 @@ func main() {
 	angle1 := 0
 	angle2 := 360 * 64
 
+	percLowerLimit := 2500
+	percUpperLimit := 9500
 	duration := time.Second * 4
-	tickDuration := time.Second * 4 / 800
-	timeout := 10
+	tickDuration := time.Second * 4 / 7000
+	timeout := 5
 	direction := 1
 
 	var percMutex sync.RWMutex
-	perc := 101
+	perc := percLowerLimit + 1
 
 	go func() {
 		for {
-			if perc >= 900 || perc <= 100 {
+			if perc >= percUpperLimit || perc <= percLowerLimit {
 				direction = -direction
 				time.Sleep(duration)
 			} else {
@@ -107,7 +109,7 @@ func main() {
 		gc.SetRgbFgColor(gdk.NewColor("white"))
 		pixmap.GetDrawable().DrawArc(gc, true, startX, startY, maxSize, maxSize, angle1, angle2)
 
-		size := maxSize / 100 * perc / 10
+		size := maxSize / 100 * perc / 100
 		x := startX + (maxSize-size)/2
 		y := startY + (maxSize-size)/2
 
