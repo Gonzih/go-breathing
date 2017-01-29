@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/glib"
@@ -71,8 +72,8 @@ func main() {
 	angle1 := 0
 	angle2 := 360 * 64
 
-	// duration := 4000
-	timeout := 50
+	duration := 4000
+	timeout := duration / 90
 	perc := 6
 	direction := 1
 
@@ -91,6 +92,7 @@ func main() {
 
 		if perc >= 95 || perc <= 5 {
 			direction = -direction
+			time.Sleep(time.Second * 4)
 		}
 
 		perc += direction
