@@ -28,17 +28,6 @@ func main() {
 	var gdkwin *gdk.Window
 	var pixmap *gdk.Pixmap
 	var gc *gdk.GC
-	// colors := []string{
-	// 	"black",
-	// 	"gray",
-	// 	"blue",
-	// 	"purple",
-	// 	"red",
-	// 	"orange",
-	// 	"yellow",
-	// 	"green",
-	// 	"darkgreen",
-	// }
 
 	drawingarea.Connect("configure-event", func() {
 		if pixmap != nil {
