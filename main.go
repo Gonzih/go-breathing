@@ -69,11 +69,11 @@ func main() {
 	timeout := 10
 	direction := 1
 
-	var percAtom int64 = int64(percLowerLimit + 1)
+	var percAtom int32 = int32(percLowerLimit + 1)
 
 	go func() {
 		for {
-			perc := int(atomic.LoadInt64(&percAtom))
+			perc := int(atomic.LoadInt32(&percAtom))
 
 			if perc >= percUpperLimit || perc <= percLowerLimit {
 				direction = -direction
@@ -82,7 +82,7 @@ func main() {
 				time.Sleep(tickDuration)
 			}
 
-			atomic.AddInt64(&percAtom, int64(direction))
+			atomic.AddInt32(&percAtom, int32(direction))
 		}
 	}()
 
@@ -98,7 +98,7 @@ func main() {
 		startX := centerX - maxSize/2
 		startY := centerY - maxSize/2
 
-		perc := int(atomic.LoadInt64(&percAtom))
+		perc := int(atomic.LoadInt32(&percAtom))
 
 		// fmt.Printf("perc = %d, direction = %d\n", perc, direction)
 
