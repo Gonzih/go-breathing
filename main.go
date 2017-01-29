@@ -63,25 +63,20 @@ func main() {
 	angle2 := 360 * 64
 
 	duration := time.Second * 4
-	longTickDuration := time.Second * 4 / 80
-	shortTickDuration := time.Second * 4 / 80
+	tickDuration := time.Second * 4 / 800
 	timeout := 10
 	direction := 1
 
 	var percMutex sync.RWMutex
-	perc := 11
+	perc := 101
 
 	go func() {
 		for {
-			if perc >= 90 || perc <= 10 {
+			if perc >= 900 || perc <= 100 {
 				direction = -direction
 				time.Sleep(duration)
 			} else {
-				if perc > 25 && perc < 75 {
-					time.Sleep(shortTickDuration)
-				} else {
-					time.Sleep(longTickDuration)
-				}
+				time.Sleep(tickDuration)
 			}
 
 			percMutex.Lock()
@@ -112,7 +107,7 @@ func main() {
 		gc.SetRgbFgColor(gdk.NewColor("white"))
 		pixmap.GetDrawable().DrawArc(gc, true, startX, startY, maxSize, maxSize, angle1, angle2)
 
-		size := maxSize / 100 * perc
+		size := maxSize / 100 * perc / 10
 		x := startX + (maxSize-size)/2
 		y := startY + (maxSize-size)/2
 
