@@ -11,11 +11,6 @@ import (
 	"github.com/mattn/go-gtk/gtk"
 )
 
-type point struct {
-	x int
-	y int
-}
-
 func main() {
 	gtk.Init(&os.Args)
 	window := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
@@ -23,7 +18,6 @@ func main() {
 	window.Connect("destroy", gtk.MainQuit)
 
 	vbox := gtk.NewVBox(true, 0)
-	vbox.SetBorderWidth(5)
 	drawingarea := gtk.NewDrawingArea()
 
 	var gdkwin *gdk.Window
@@ -33,7 +27,6 @@ func main() {
 	window.Connect("key-press-event", func(ctx *glib.CallbackContext) {
 		arg := ctx.Args(0)
 		key := *(**gdk.EventKey)(unsafe.Pointer(&arg))
-		// fmt.Println(key.Keyval)
 
 		switch key.Keyval {
 		case 113, 65307:
@@ -112,8 +105,6 @@ func main() {
 
 		perc := int(atomic.LoadInt32(&percAtom))
 
-		// fmt.Printf("perc = %d, direction = %d\n", perc, direction)
-
 		gc.SetRgbFgColor(gdk.NewColor("black"))
 		pixmap.GetDrawable().DrawArc(gc, true, startX-10, startY-10, maxSize+20, maxSize+20, angle1, angle2)
 		gc.SetRgbFgColor(gdk.NewColor("white"))
@@ -130,7 +121,6 @@ func main() {
 		if previousPerc != perc {
 			drawingarea.QueueDraw()
 			previousPerc = perc
-			// fmt.Println("Skipping redraw queue")
 		}
 
 		return true
