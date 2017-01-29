@@ -18,7 +18,7 @@ type point struct {
 func main() {
 	gtk.Init(&os.Args)
 	window := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
-	window.SetTitle("GTK DrawingArea")
+	window.SetTitle("Go Breathing")
 	window.Connect("destroy", gtk.MainQuit)
 
 	vbox := gtk.NewVBox(true, 0)
