@@ -64,38 +64,54 @@ func main() {
 	window.Add(vbox)
 	window.SetSizeRequest(400, 400)
 	window.ShowAll()
+	// window.Fullscreen()
 
 	gdkwin = drawingarea.GetWindow()
 
 	angle1 := 0
 	angle2 := 360 * 64
-	innerSize := 600
-	startPos := 50
-	tick := 0
-	timeout := 10
-	duration := 4000
-	direction := innerSize * timeout / duration
+
+	// duration := 4000
+	timeout := 50
+	perc := 6
+	direction := 1
 
 	glib.TimeoutAdd(uint(timeout), func() bool {
-		tick += direction
-		fmt.Printf("tick = %d, direction = %d\n", tick, direction)
+		var windowW, windowH int
+		window.GetSize(&windowW, &windowH)
 
-		gc.SetRgbFgColor(gdk.NewColor("black"))
-		pixmap.GetDrawable().DrawArc(gc, true, startPos-10, startPos-10, innerSize+20, innerSize+20, angle1, angle2)
-		gc.SetRgbFgColor(gdk.NewColor("white"))
-		pixmap.GetDrawable().DrawArc(gc, true, startPos, startPos, innerSize, innerSize, angle1, angle2)
+		maxSize := windowH / 100 * 60
+		halfSize := maxSize / 2
+		centerX := windowW / 2
+		centerY := windowH / 2
+		startX := centerX - maxSize/2
+		startY := centerY - maxSize/2
 
-		x := startPos + tick/2
-		y := startPos + tick/2
-		size := innerSize - tick
-		if size <= 0 || size >= innerSize {
+		fmt.Println(windowW, windowH, maxSize, halfSize, centerX, centerY)
+
+		if perc >= 95 || perc <= 5 {
 			direction = -direction
 		}
-		color := gdk.NewColorRGB(0, 0, 0)
+
+		perc += direction
+
+		fmt.Printf("perc = %d, direction = %d\n", perc, direction)
+
+		gc.SetRgbFgColor(gdk.NewColor("black"))
+		pixmap.GetDrawable().DrawArc(gc, true, startX-10, startY-10, maxSize+20, maxSize+20, angle1, angle2)
+		gc.SetRgbFgColor(gdk.NewColor("white"))
+		pixmap.GetDrawable().DrawArc(gc, true, startX, startY, maxSize, maxSize, angle1, angle2)
+
+		size := maxSize / 100 * perc
+		x := startX + (maxSize-size)/2
+		y := startY + (maxSize-size)/2
+		fmt.Println(size, x)
+
+		color := gdk.NewColor("blue")
 		gc.SetRgbFgColor(color)
 		pixmap.GetDrawable().DrawArc(gc, true, x, y, size, size, angle1, angle2)
-		drawingarea.QueueDraw()
 
+		drawingarea.QueueDraw()
 		return true
 	})
 
