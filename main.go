@@ -4,6 +4,7 @@ import (
 	"os"
 	"sync/atomic"
 	"time"
+	"unsafe"
 
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/glib"
@@ -28,6 +29,15 @@ func main() {
 	var gdkwin *gdk.Window
 	var pixmap *gdk.Pixmap
 	var gc *gdk.GC
+
+	window.Connect("key-press-event", func(ctx *glib.CallbackContext) {
+		arg := ctx.Args(0)
+		key := *(**gdk.EventKey)(unsafe.Pointer(&arg))
+
+		if key.Keyval == 113 {
+			gtk.MainQuit()
+		}
+	})
 
 	drawingarea.Connect("configure-event", func() {
 		if pixmap != nil {
