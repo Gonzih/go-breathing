@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/mattn/go-gtk/gdk"
@@ -65,37 +66,48 @@ func main() {
 	window.Add(vbox)
 	window.SetSizeRequest(400, 400)
 	window.ShowAll()
-	// window.Fullscreen()
+	window.Fullscreen()
 
 	gdkwin = drawingarea.GetWindow()
 
 	angle1 := 0
 	angle2 := 360 * 64
 
-	duration := 4000
-	timeout := duration / 90
-	perc := 6
+	duration := time.Second * 4
+	tickDuration := time.Second * 4 / 90
+	timeout := 50
 	direction := 1
 
+	var percMutex sync.RWMutex
+	perc := 6
+
+	go func() {
+		for {
+			if perc >= 95 || perc <= 5 {
+				direction = -direction
+				time.Sleep(duration)
+			} else {
+				time.Sleep(tickDuration)
+			}
+
+			percMutex.Lock()
+			perc += direction
+			percMutex.Unlock()
+		}
+	}()
+
 	glib.TimeoutAdd(uint(timeout), func() bool {
+		percMutex.RLock()
+		defer percMutex.RUnlock()
+
 		var windowW, windowH int
 		window.GetSize(&windowW, &windowH)
 
 		maxSize := windowH / 100 * 60
-		halfSize := maxSize / 2
 		centerX := windowW / 2
 		centerY := windowH / 2
 		startX := centerX - maxSize/2
 		startY := centerY - maxSize/2
-
-		fmt.Println(windowW, windowH, maxSize, halfSize, centerX, centerY)
-
-		if perc >= 95 || perc <= 5 {
-			direction = -direction
-			time.Sleep(time.Second * 4)
-		}
-
-		perc += direction
 
 		fmt.Printf("perc = %d, direction = %d\n", perc, direction)
 
